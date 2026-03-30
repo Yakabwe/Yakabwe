@@ -33,18 +33,6 @@
       box-shadow: 0 20px 60px rgba(0,0,0,.4);
     }
     .overlay h2 { margin: 0 0 10px; font-size: 20px; }
-    .overlay input {
-      width: 100%; padding: 10px 12px; border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(255,255,255,.06); color: #fff;
-      outline: none;
-      margin: 10px 0 12px;
-    }
-    .overlay button{
-      padding: 10px 12px; border-radius: 12px; border: 0;
-      background: #ffffff; color:#0b0f1a; font-weight: 700;
-      cursor:pointer; width: 100%;
-    }
     .overlay .small { opacity:.8; font-size: 12px; margin-top: 10px; }
   </style>
 </head>
@@ -63,8 +51,8 @@
     <div class="card">
       <h2>Game Over</h2>
       <div style="opacity:.9">Ton score : <b id="finalScore">0</b></div>
-      <input id="pseudo" maxlength="20" placeholder="Ton pseudo (max 20)" />
-      <button id="submit">Envoyer au Top</button>
+      <div class="small">Notez votre score</div>
+      <div class="small">Descendez sur la page !</div>
       <div class="small">Ensuite : R pour rejouer</div>
     </div>
   </div>
@@ -79,8 +67,6 @@
     const hpEl = document.getElementById("hp");
     const overlay = document.getElementById("over");
     const finalScoreEl = document.getElementById("finalScore");
-    const pseudoEl = document.getElementById("pseudo");
-    const submitBtn = document.getElementById("submit");
 
     // Game state
     let W = canvas.width, H = canvas.height;
@@ -117,9 +103,6 @@
       player.cooldown = 0;
       scoreEl.textContent = score;
       hpEl.textContent = player.hp;
-      pseudoEl.value = "";
-      submitBtn.textContent = "Envoyer au Top";
-      submitBtn.disabled = false;
     }
 
     // --- Input (keyboard)
@@ -274,7 +257,6 @@
       running = false;
       finalScoreEl.textContent = score;
       overlay.style.display = "flex";
-      pseudoEl.focus();
     }
 
     // --- Drawing
@@ -405,20 +387,6 @@
         return this;
       }
     }
-
-    // --- Submit score to parent (Wix page) via postMessage
-    submitBtn.addEventListener("click", () => {
-      const pseudo = (pseudoEl.value || "").trim().slice(0, 20);
-      if (!pseudo) { pseudoEl.focus(); return; }
-
-      window.parent.postMessage(
-        { type: "SCORE_SUBMIT", pseudo, score },
-        "*"
-      );
-
-      submitBtn.textContent = "Envoyé ✔";
-      submitBtn.disabled = true;
-    });
 
     reset();
     requestAnimationFrame(tick);
